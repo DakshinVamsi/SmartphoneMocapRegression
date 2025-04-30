@@ -1,4 +1,4 @@
-# Joint Angle Estimation from MoCap and Video-Derived Pose Data
+# Joint Angle and EMG Envelope Estimation from MoCap and Video-Derived Pose Data
 
 This repository contains code, models, and pipelines for regressing joint angles from 3D joint coordinates acquired from both ground-truth MoCap systems and simplified 3D joint coordinates obtained from smartphone video (e.g., via MediaPipe or similar pose estimation models).
 
