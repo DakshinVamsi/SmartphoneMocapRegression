@@ -1,30 +1,52 @@
-# Joint Angle and EMG Envelope Estimation from MoCap and Video-Derived Pose Data
 
-This repository contains code, models, and pipelines for regressing joint angles from 3D joint coordinates acquired from both ground-truth MoCap systems and simplified 3D joint coordinates obtained from smartphone video (e.g., via MediaPipe or similar pose estimation models).
+# MoCap-to-EMG and Joint Angle and EMG envelope Regression
 
----
+This repository contains code and datasets for training deep learning models to regress electromyography (EMG) signals and joint angles from 3D motion capture (MoCap) data. The project explores the relationship between biomechanical movement (captured as xyz joint coordinates) and physiological signals (EMG) using sequence models like LSTMs.
 
-## 📌 Project Highlights
+## Project Overview
 
-- Trained LSTM-based regression model using MoCap 3D XYZ coordinates  
-- Joint angles predicted include **36 biomechanical DOFs** (e.g., hip flexion, knee angle, etc.)  
-- Raw MoCap format (42 joints × 3D = 126D input) is supported  
-- MediaPipe-style reduced joint input (33 joints × 3D = 99D input) is supported by:
-  - Engineering simplified joint representations from raw MoCap
-  - Training a second model compatible with real-time video inputs  
-- Streaming inference and visualization support (real-time predictor + plotter)
+Human motion involves complex neuromuscular coordination. This project builds regression models that take in MoCap joint coordinates and predict:
 
----
+- EMG Envelopes
+- Joint angles
 
-## 🧠 Model Architecture
+## Dataset
 
-- **Input**: Sequences of 3D joint coordinates (`126D` or `99D`)
-- **Model**: 2-layer LSTM with 256 hidden units
-- **Output**: 36 joint angles per timestep
-- **Loss**: Mean Squared Error (MSE)
-- **Window size**: 500 timesteps
+eg: Subject_Data -> S5 -> Activity_Trials (contains the trials data)
 
----
+Once this data is fed into pipeline.ipynb -> it is stored in sync_data as "/{SUBJECT_ID}_{action_name}_Synchronized.csv"
 
-## 🗂 Directory Structure
+This dataset is again fed into emg_filtering.ipynb to produce the final dataset which will be present in sync_data -> imputed (this is what is used for training the data)
+
+## Code File description
+
+| Notebook                           | Description                                                                                                                                                                                            |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `pipeline.ipynb`                   | Merges and synchronizes multiple trials of a single activity based on frame alignment. Outputs are unified datasets ready for EMG and MoCap processing.                                                |
+| `emg_filtering.ipynb`              | Applies signal processing to the raw EMG data: filtering, envelope extraction (linear EMG), and imputation. Outputs clean EMG envelopes aligned with the joint coordinate data.                        |
+| `training_mocap_jointangles.ipynb` | Trains an LSTM model to regress from full 3D MoCap joint coordinates to joint angles. Useful for learning the biomechanical relationship between spatial motion and anatomical angles.                 |
+| `training_mocap_emg.ipynb`         | Trains an LSTM model to regress from 3D MoCap joint coordinates to filtered EMG envelopes. Captures neuromuscular control patterns underlying observed motion.                                         |
+| `training_mocap_mediapipe.ipynb`   | A variant of the joint angle regression model that uses a reduced set of joint coordinates (mimicking MediaPipe-style 3D inputs). This simulates real-world use cases where full MoCap is unavailable. |
+
+
+## Model Architecture
+- Input: 3D joint coordinates (42 joints × 3 = 126D, or MediaPipe-style 99D input)
+
+- Model: LSTM-based sequence-to-sequence regression
+
+- Output:
+
+    -  36 joint angles (for joint angle model)
+
+    - n-dimensional EMG envelope features (for EMG model)
+
+## Training Details
+- Sequence Length: 500 timesteps
+
+- Loss Function: MSELoss
+
+- Optimizer: Adam
+
+- Regularization: Dropout = 0.3
+
 
