@@ -49,4 +49,79 @@ This dataset is again fed into emg_filtering.ipynb to produce the final dataset 
 
 - Regularization: Dropout = 0.3
 
+---
+
+##  Installation
+
+### Clone the Repository:
+
+```bash
+git clone https://github.com/NeuroLabsIITH/SmartphoneMocapRegression.git
+cd SmartphoneMocapRegression
+```
+
+### Install Dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+---
+
+##  Pipeline Overview
+
+### Step 1: Trial Synchronization
+
+```bash
+# Run inside Jupyter
+pipeline.ipynb
+```
+
+* Merges all trials of a specific activity
+* Aligns joint, EMG, and frame-wise data
+* Produces cleaned and aligned trial CSVs
+
+### Step 2: EMG Filtering
+
+```bash
+# Run inside Jupyter
+emg_filtering.ipynb
+```
+
+* Applies band-pass filtering
+* Extracts linear EMG envelopes
+* Fills missing data (imputation)
+
+### Step 3: Model Training
+
+#### A. Joint Angle Regression
+
+```bash
+# Full 3D MoCap to Joint Angles
+training_mocap_jointangles.ipynb
+```
+
+#### B. EMG Regression
+
+```bash
+# Full 3D MoCap to EMG Envelopes
+training_mocap_emg.ipynb
+```
+
+#### C. MediaPipe-Style Input
+
+```bash
+# Reduced joint format to Joint Angles
+training_mocap_mediapipe.ipynb
+```
+
+---
+
+##  Output
+
+* **Filtered CSVs**: Cleaned EMG envelopes and synchronized joint data
+* **Trained Models**: Saved `.pt` PyTorch model files
+* **Prediction Plots**: Comparison of predicted vs ground truth values
+* **Evaluation Metrics**: MSE and error trends over epochs
+
+---
 
